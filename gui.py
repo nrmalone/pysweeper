@@ -15,7 +15,9 @@ class Gui():
         self.difficulty = tk.StringVar()
         self.difficulty.set('medium')
         self.create_difficulty_buttons()
-        self.placeholder = self.placeholder_grid()
+        self.placeholder = tk.Frame(self.window)
+        self.placeholder.grid(row=1, column=1, rowspan=8, columnspan=8)
+        self.placeholder_grid()
 
         self.newGameButton = tk.Button(self.window, command=lambda: self.new_game(self.difficulty.get()),
                                        text="New Game", bg=BG, fg=FG, font=FONT, bd=5, relief="raised"
@@ -35,14 +37,12 @@ class Gui():
                            ).grid(row=(i+1), column=0, pady=(5,0), padx=(0,5))
     
     def placeholder_grid(self):
-        placeholderFrame = tk.Frame(self.window).grid(row=1, column=1)
         for i in range(0, 8):
             for j in range(0, 8):
-                tk.Button(placeholderFrame,
+                tk.Button(self.placeholder,
                           width=4, height=2,
                           state="disabled", bd=2, relief="solid"
-                          ).grid(row=i+1, column=j+1)
-        return placeholderFrame
+                          ).grid(row=i, column=j)
     
     def new_game(self, difficulty):
         for child in self.placeholder.winfo_children():
@@ -50,13 +50,13 @@ class Gui():
         self.placeholder.destroy()
         
         self.board = board.Board(self.difficulty.get())
-        self.create_cell_buttons
+        self.create_cell_buttons()
 
     def create_cell_buttons(self):
-        self.cellButton = []
+        self.cellButton = {}
         boardFrame = tk.Frame(self.window)
-        boardFrame.grid(row=1, column=1)
-        for cell in self.board.get_cells:
-            self.cellButton[cell.row, cell.col] = tk.Button(boardFrame, width=4, height=2, relief="raised", command=lambda r=cell.row, c=cell.col: self.clicked(r, c))
-            self.cellButton[cell.row, cell.col].grid(row=cell.row, column=cell.col)
+        boardFrame.grid(row=1, column=1, rowspan=self.board.width, columnspan=self.board.height)
+        for (row, col), cell in self.board.get_cells().items():
+            self.cellButton[row, col] = tk.Button(boardFrame, width=4, height=2, relief="raised", command=lambda r=row, c=col: self.clicked(r, c))
+            self.cellButton[row, col].grid(row=row, column=col)
 gui = Gui()
