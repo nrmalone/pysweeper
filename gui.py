@@ -38,20 +38,19 @@ class Gui():
         placeholderFrame = tk.Frame(self.window).grid(row=1, column=1)
         for i in range(0, 8):
             for j in range(0, 8):
-                tk.Button(self.window,
+                tk.Button(placeholderFrame,
                           width=4, height=2,
                           state="disabled", bd=2, relief="solid"
                           ).grid(row=i+1, column=j+1)
         return placeholderFrame
     
     def new_game(self, difficulty):
-        """
         for child in self.placeholder.winfo_children():
             child.destroy()
-        self.placehol*der.destroy()
-        """
-
-        self.board = board.Board(self.difficulty.get())        
+        self.placeholder.destroy()
+        
+        self.board = board.Board(self.difficulty.get())
+        self.create_cell_buttons
 
     def create_cell_buttons(self):
         self.cellButton = []
