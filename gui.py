@@ -11,6 +11,7 @@ class Gui():
         self.window = tk.Tk()
         self.window.title("Minesweeper")
         self.window.configure(bg=WINDOW_BG, padx=10, pady=10)
+        self.firstGame = True
 
         self.difficulty = tk.StringVar()
         self.difficulty.set('medium')
@@ -45,19 +46,28 @@ class Gui():
                           ).grid(row=i, column=j)
     
     def new_game(self, difficulty):
-        for child in self.placeholder.winfo_children():
-            child.destroy()
-        self.placeholder.destroy()
+        if self.firstGame:
+            for child in self.placeholder.winfo_children():
+                child.destroy()
+            self.placeholder.destroy()
+            self.firstGame = False
+
+        if hasattr(self, 'cellButton'):
+            for button in self.cellButton.values():
+                button.destroy()
         
+        if hasattr(self, 'boardFrame'):
+            self.boardFrame.destroy()
+
         self.board = board.Board(self.difficulty.get())
         self.create_cell_buttons()
 
     def create_cell_buttons(self):
         self.cellButton = {}
-        boardFrame = tk.Frame(self.window)
-        boardFrame.grid(row=1, column=1, rowspan=self.board.width, columnspan=self.board.height)
+        self.boardFrame = tk.Frame(self.window)
+        self.boardFrame.grid(row=1, column=1, rowspan=self.board.width, columnspan=self.board.height)
         for (row, col), cell in self.board.get_cells().items():
-            self.cellButton[row, col] = tk.Button(boardFrame, width=4, height=2, relief="raised", command=lambda r=row, c=col: self.clicked(r, c))
+            self.cellButton[row, col] = tk.Button(self.boardFrame, width=4, height=2, relief="raised", command=lambda r=row, c=col: self.clicked(r, c))
             self.cellButton[row, col].grid(row=row, column=col)
 
     def clicked(self, row, col):
