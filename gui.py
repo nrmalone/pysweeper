@@ -59,4 +59,29 @@ class Gui():
         for (row, col), cell in self.board.get_cells().items():
             self.cellButton[row, col] = tk.Button(boardFrame, width=4, height=2, relief="raised", command=lambda r=row, c=col: self.clicked(r, c))
             self.cellButton[row, col].grid(row=row, column=col)
+
+    def clicked(self, row, col):
+        cell = self.board.get_cells()[(row, col)]
+        if cell.isMine:
+            self.cellButton[row, col].config(text="X", bg="red")
+            for (r, c), button in self.cellButton.items():
+                button.config(state="disabled")
+            tk.messagebox.showinfo("Game Over", "You lost!")
+        else:
+            self.clear_cell(row, col)
+
+    def clear_cell(self, row, col):
+        cell = self.board.get_cells()[(row, col)]
+        if cell.isCleared:
+            return
+        cell.isCleared = True
+        self.cellButton[row, col].config(text=str(cell.neighborMines), relief="sunken", state="disabled")
+        if cell.neighborMines == 0:
+            for dr in (-1, 0, 1):
+                for dc in (-1, 0, 1):
+                    r = row + dr
+                    c = col + dc
+                    if (0 <= r < self.board.height and 0 <= c < self.board.width and not self.board.get_cells()[(r, c)].isMine):
+                        self.clear_cell(r, c)
+                        
 gui = Gui()
